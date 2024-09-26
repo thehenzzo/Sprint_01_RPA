@@ -1,0 +1,48 @@
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+# Função para scraping no Infojobs
+def scrape_infojobs():
+    url_infojobs = 'https://www.infojobs.com.br/ranking-melhores-empresas.aspx'
+    response = requests.get(url_infojobs)
+
+    if response.status_code == 200:
+        print("Acesso bem-sucedido ao Infojobs!")
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Lista para armazenar os dados
+        dados_infojobs = []
+
+        # Verifique os seletores corretos inspecionando o HTML
+        # Tente ajustar aqui se necessário
+        empresas_infojobs = soup.find_all('div', class_='card-body py-20')
+
+        for empresa in empresas_infojobs:
+            # Extraindo o nome da empresa
+            nome_empresa = empresa.find('div', class_='h3 text-body font-weight-bold mb-0').text.strip() if empresa.find('div', class_='h3 text-body font-weight-bold mb-0') else 'N/A'
+
+            # Extraindo a nota da empresa
+            nota_empresa = empresa.find('span', class_='font-weight-bold text-body headings-font-family').text.strip() if empresa.find('span', class_='font-weight-bold text-body headings-font-family') else 'N/A'
+
+            # Adicionando os dados à lista
+            dados_infojobs.append({
+                'nome': nome_empresa,
+                'nota': nota_empresa
+            })
+
+        # Salvando os dados do Infojobs em um CSV com nome, ramo e nota
+        with open('ranking_infojobs.csv', 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=['nome', 'nota'])
+            writer.writeheader()
+            writer.writerows(dados_infojobs)
+
+        print("Dados do Infojobs salvos com sucesso em 'ranking_infojobs.csv'")
+
+        return dados_infojobs
+    else:
+        print(f"Erro ao acessar o Infojobs: {response.status_code}")
+        return []
+
+# Executar a função para gerar o CSV
+scrape_infojobs()
