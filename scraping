@@ -11,7 +11,7 @@ def scrape_infojobs():
         print("Acesso bem-sucedido ao Infojobs!")
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Lista para armazenar os dadossss
+        # Lista para armazenar os dadoss
         dados_infojobs = []
 
         # Verifique os seletores corretos inspecionando o HTML
